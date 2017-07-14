@@ -14,6 +14,7 @@ class CropOverlayView(ctx: Context, attributeSet: AttributeSet?) : View(ctx) {
     lateinit private var overlayPaint: Paint
     var overlayColor = resources.getColor(R.color.overlayColor)
     var borderColor = resources.getColor(R.color.borderColor)
+    var margin = dp(context, 20f)
 
     init {
         initWidth(attributeSet)
@@ -33,6 +34,8 @@ class CropOverlayView(ctx: Context, attributeSet: AttributeSet?) : View(ctx) {
 
     override fun onDraw(canvas: Canvas?) {
         canvas?.drawRect(0f, 0f, width.toFloat(), height.toFloat(), overlayPaint)
+        var size = width - margin * 2
+        cropRect.set(margin.toFloat(), ((height - size) / 2).toFloat(), (width - margin).toFloat(), ((height + size) / 2).toFloat())
         drawBorder(canvas)
     }
 
@@ -44,6 +47,8 @@ class CropOverlayView(ctx: Context, attributeSet: AttributeSet?) : View(ctx) {
         borderPaint.strokeCap = Paint.Cap.SQUARE
         borderPaint.color = borderColor
         borderPaint.strokeWidth = resources.getDimension(R.dimen.border_width)
+        canvas?.drawRect(cropRect, clearPaint)
+        canvas?.drawRect(cropRect, borderPaint)
     }
 
 }

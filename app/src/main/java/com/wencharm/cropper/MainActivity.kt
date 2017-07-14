@@ -7,12 +7,12 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     val SELECT_IMAGE = 0x001
+    lateinit var cropView: CropView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +25,7 @@ class MainActivity : AppCompatActivity() {
             galleryIntent.action = Intent.ACTION_GET_CONTENT
             startActivityForResult(Intent.createChooser(galleryIntent, "chooser"), SELECT_IMAGE)
         }
+        cropView = findViewById(R.id.image)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             if (requestCode == SELECT_IMAGE) {
                 val result = data?.data
                 Log.d("selected image: ", result?.path)
-                findViewById<ImageView>(R.id.image).setImageURI(result)
+                cropView.setImageUri(result)
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

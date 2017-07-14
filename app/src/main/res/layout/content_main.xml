@@ -9,10 +9,9 @@
     tools:context="com.wencharm.cropper.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <ImageView
+    <com.wencharm.cropper.CropView
         android:id="@+id/image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitCenter"/>
+        android:layout_height="match_parent"/>
 
 </android.support.constraint.ConstraintLayout>

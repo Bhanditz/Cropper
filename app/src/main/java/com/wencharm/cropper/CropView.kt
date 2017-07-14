@@ -48,7 +48,8 @@ class CropView @JvmOverloads constructor(
         overlayView.invalidate()
     }
 
-    fun setImageUri(uri: Uri) {
+    fun setImageUri(uri: Uri?) {
         imageView.setImageURI(uri)
+        invalidate()
     }
 }
