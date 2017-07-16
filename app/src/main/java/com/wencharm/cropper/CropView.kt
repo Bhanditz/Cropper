@@ -1,6 +1,7 @@
 package com.wencharm.cropper
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.util.AttributeSet
@@ -16,6 +17,9 @@ class CropView @JvmOverloads constructor(
 
     lateinit private var imageView: CropImageView
     lateinit private var overlayView: CropOverlayView
+    var uri: Uri? = null
+
+    private var loadListener: BitmapLoadListener? = null
 
     init {
         init(attrs)
@@ -43,13 +47,39 @@ class CropView @JvmOverloads constructor(
         setMeasuredDimension(imageView.measuredWidthAndState, imageView.measuredHeightAndState)
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        if (uri != null && (w != oldw || h != oldh)) BitmapManager.load(context, uri!!, w, h, loadListener)
+    }
+
     override fun invalidate() {
         imageView.invalidate()
         overlayView.invalidate()
     }
 
-    fun setImageUri(uri: Uri?) {
-        imageView.setImageURI(uri)
-        invalidate()
+    fun setImageUri(uri: Uri) {
+        this.uri = uri
+        BitmapManager.load(context, uri, width, height, loadListener ?: object : BitmapLoadListener{
+            override fun onStart() {
+            }
+
+            override fun onError(e: Throwable) {
+            }
+
+            override fun onComplete(uri: Uri, bitmap: Bitmap?) {
+                setImageBitmap(bitmap)
+                invalidate()
+            }
+
+        })
     }
+
+    fun setImageBitmap(bitmap: Bitmap?) {
+        imageView.setImageBitmap(bitmap)
+    }
+
+    fun setLoadListener(listener: BitmapLoadListener) {
+        loadListener = listener
+    }
+
 }

@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
             if (requestCode == SELECT_IMAGE) {
                 val result = data?.data
                 Log.d("selected image: ", result?.path)
-                cropView.setImageUri(result)
+                if (result != null) cropView.setImageUri(result)
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
