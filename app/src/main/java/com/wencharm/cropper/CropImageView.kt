@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.widget.ImageView
 
 /**
@@ -31,5 +33,58 @@ class CropImageView(ctx: Context, attrs: AttributeSet?) : ImageView(ctx) {
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    //todo
+    fun animateToAllowedBound() {
+
+    }
+
+    inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        //todo
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            return true
+        }
+
+        //todo
+        fun isValidScale(scale: Float): Boolean {
+            return true
+        }
+    }
+
+    inner class TranslationGestureListener {
+        //todo
+        fun onDown(event: MotionEvent) {
+
+        }
+
+        //todo
+        fun onTouchEvent(event: MotionEvent, inProgress: Boolean) {
+
+        }
+    }
+
+    inner class GestureProcessor {
+
+        var scaleDetector = ScaleGestureDetector(context, ScaleGestureListener())
+        var translationGestureListener = TranslationGestureListener()
+
+        fun onDown(event: MotionEvent) {
+            translationGestureListener.onDown(event)
+        }
+
+        fun onTouchEvent(event: MotionEvent) {
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> return
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                    animateToAllowedBound()
+                    return
+                }
+            }
+
+            scaleDetector.onTouchEvent(event)
+            translationGestureListener.onTouchEvent(event, !scaleDetector.isInProgress)
+        }
+
     }
 }
