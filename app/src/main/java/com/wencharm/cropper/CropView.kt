@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.widget.FrameLayout
 
 /**
@@ -15,30 +16,17 @@ class CropView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    lateinit private var imageView: CropImageView
-    lateinit private var overlayView: CropOverlayView
+    var imageView: CropImageView = CropImageView(context, attrs)
+    var overlayView: CropOverlayView = CropOverlayView(context, attrs)
     var uri: Uri? = null
 
     private var loadListener: BitmapLoadListener? = null
 
     init {
-        init(attrs)
-    }
-
-    fun init(attrs: AttributeSet?) {
-        initImageView(attrs)
-        initOverlayView(attrs)
-    }
-
-    fun initImageView(attrs: AttributeSet?) {
-        imageView = CropImageView(context, attrs)
         imageView.setBackgroundColor(Color.BLACK)
         addView(imageView)
-    }
-
-    fun initOverlayView(attrs: AttributeSet?) {
-        overlayView = CropOverlayView(context, attrs)
         addView(overlayView)
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -57,9 +45,19 @@ class CropView @JvmOverloads constructor(
         overlayView.invalidate()
     }
 
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        if (ev != null) imageView.gestureProcessor.onDown(ev)
+        return true
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event != null) imageView.gestureProcessor.onTouchEvent(event)
+        return true
+    }
+
     fun setImageUri(uri: Uri) {
         this.uri = uri
-        BitmapManager.load(context, uri, width, height, loadListener ?: object : BitmapLoadListener{
+        BitmapManager.load(context, uri, width, height, loadListener ?: object : BitmapLoadListener {
             override fun onStart() {
             }
 

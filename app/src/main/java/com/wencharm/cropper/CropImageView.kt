@@ -14,20 +14,13 @@ import android.widget.ImageView
 
 class CropImageView(ctx: Context, attrs: AttributeSet?) : ImageView(ctx) {
 
-    lateinit private var allowedBounds: RectF
-    lateinit private var imageBounds: RectF
-    lateinit private var realImageBounds: RectF
-    lateinit private var mImageMatrix: Matrix
+    private var allowedBounds = RectF()
+    private var imageBounds = RectF()
+    private var realImageBounds = RectF()
+    private var iMatrix = Matrix()
+    var gestureProcessor = GestureProcessor()
 
     init {
-        initWidth(attrs)
-    }
-
-    fun initWidth(attrs: AttributeSet?) {
-        allowedBounds = RectF()
-        imageBounds = RectF()
-        realImageBounds = RectF()
-        mImageMatrix = Matrix()
         scaleType = ScaleType.MATRIX
     }
 
@@ -37,12 +30,34 @@ class CropImageView(ctx: Context, attrs: AttributeSet?) : ImageView(ctx) {
 
     //todo
     fun animateToAllowedBound() {
+        updateBounds()
+    }
 
+    fun scaleImage(factor: Float, pivotX: Float, pivotY: Float) {
+        iMatrix.postScale(factor, factor, pivotX, pivotY)
+        imageMatrix = iMatrix
+        updateBounds()
+    }
+
+    fun translateImage(dx: Float, dy: Float) {
+        iMatrix.postTranslate(dx, dy)
+        imageMatrix = iMatrix
+        if (dx > 0.01f || dy > 0.01f) updateBounds()
+    }
+
+    fun updateBounds() {
+        realImageBounds.set(0f, 0f, width.toFloat(), height.toFloat())
+        imageBounds.set(realImageBounds)
+        iMatrix.mapRect(imageBounds)
     }
 
     inner class ScaleGestureListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         //todo
         override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val factor = detector.scaleFactor
+            if (isValidScale(scaleXFromMatrix(iMatrix) * factor)) {
+                scaleImage(factor, detector.focusX, detector.focusY)
+            }
             return true
         }
 
@@ -53,14 +68,20 @@ class CropImageView(ctx: Context, attrs: AttributeSet?) : ImageView(ctx) {
     }
 
     inner class TranslationGestureListener {
+        var prex = 0f
+        var prey = 0f
+
         //todo
         fun onDown(event: MotionEvent) {
-
+            prex = event.x
+            prey = event.y
         }
 
         //todo
         fun onTouchEvent(event: MotionEvent, inProgress: Boolean) {
-
+            if (!inProgress) translateImage(event.x - prex, event.y - prey)
+            prex = event.x
+            prey = event.y
         }
     }
 
@@ -83,7 +104,7 @@ class CropImageView(ctx: Context, attrs: AttributeSet?) : ImageView(ctx) {
             }
 
             scaleDetector.onTouchEvent(event)
-            translationGestureListener.onTouchEvent(event, !scaleDetector.isInProgress)
+            translationGestureListener.onTouchEvent(event, scaleDetector.isInProgress)
         }
 
     }
