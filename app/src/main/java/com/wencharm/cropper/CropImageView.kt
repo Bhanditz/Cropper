@@ -67,6 +67,7 @@ class CropImageView(ctx: Context, attrs: AttributeSet?) : ImageView(ctx) {
         }
     }
 
+    //todo handle multi_pointers
     inner class TranslationGestureListener {
         var prex = 0f
         var prey = 0f
