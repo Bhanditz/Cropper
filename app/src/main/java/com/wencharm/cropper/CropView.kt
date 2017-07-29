@@ -16,8 +16,8 @@ class CropView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
-    var imageView: CropImageView = CropImageView(context, attrs)
-    var overlayView: CropOverlayView = CropOverlayView(context, attrs)
+    var imageView = CropImageView(context, attrs)
+    var overlayView = CropOverlayView(context, attrs)
     var uri: Uri? = null
 
     private var loadListener: BitmapLoadListener? = null
