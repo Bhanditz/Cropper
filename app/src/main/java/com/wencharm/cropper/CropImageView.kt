@@ -32,7 +32,17 @@ class CropImageView(ctx: Context, attrs: AttributeSet?) : ImageView(ctx) {
         iMatrix = Matrix()
     }
 
-    //todo
+    fun isTransforming(): Boolean {
+        updateBounds()
+        return Math.round(imageBounds.width()) < Math.round(allowedBounds.width())
+                || Math.round(imageBounds.height()) < Math.round(allowedBounds.height())
+                || Math.round(imageBounds.left) > Math.round(allowedBounds.left)
+                || Math.round(imageBounds.right) < Math.round(allowedBounds.right)
+                || Math.round(imageBounds.top) > Math.round(allowedBounds.top)
+                || Math.round(imageBounds.bottom) < Math.round(allowedBounds.bottom)
+    }
+
+    //todo add matrix animation
     fun animateToAllowedBound() {
         updateBounds()
         val endMatrix = calculateAllowedMatrix(realImageBounds, allowedBounds, iMatrix)

@@ -56,6 +56,7 @@ class CropView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        super.onTouchEvent(event)
         if (imageView.drawable != null && event != null) imageView.gestureProcessor.onTouchEvent(event)
         return true
     }
@@ -86,6 +87,11 @@ class CropView @JvmOverloads constructor(
 
     fun setLoadListener(listener: BitmapLoadListener) {
         loadListener = listener
+    }
+
+    fun crop() {
+        if (!imageView.isTransforming()) {
+        }
     }
 
 }
