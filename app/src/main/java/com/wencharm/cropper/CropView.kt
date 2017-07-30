@@ -35,6 +35,11 @@ class CropView @JvmOverloads constructor(
         setMeasuredDimension(imageView.measuredWidthAndState, imageView.measuredHeightAndState)
     }
 
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        imageView.allowedBounds.set(overlayView.cropRect)
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (uri != null && (w != oldw || h != oldh)) BitmapManager.load(context, uri!!, w, h, loadListener)
@@ -51,12 +56,13 @@ class CropView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event != null) imageView.gestureProcessor.onTouchEvent(event)
+        if (imageView.drawable != null && event != null) imageView.gestureProcessor.onTouchEvent(event)
         return true
     }
 
     fun setImageUri(uri: Uri) {
         this.uri = uri
+        imageView.setImageBitmap(null)
         BitmapManager.load(context, uri, width, height, loadListener ?: object : BitmapLoadListener {
             override fun onStart() {
             }
@@ -74,6 +80,8 @@ class CropView @JvmOverloads constructor(
 
     fun setImageBitmap(bitmap: Bitmap?) {
         imageView.setImageBitmap(bitmap)
+        imageView.reset()
+        imageView.animateToAllowedBound()
     }
 
     fun setLoadListener(listener: BitmapLoadListener) {

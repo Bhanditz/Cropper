@@ -10,7 +10,7 @@ import android.view.View
  */
 class CropOverlayView(ctx: Context, attributeSet: AttributeSet?) : View(ctx) {
 
-    lateinit private var cropRect: RectF
+    lateinit var cropRect: RectF
     lateinit private var overlayPaint: Paint
     var overlayColor = resources.getColor(R.color.overlayColor)
     var borderColor = resources.getColor(R.color.borderColor)
@@ -32,17 +32,21 @@ class CropOverlayView(ctx: Context, attributeSet: AttributeSet?) : View(ctx) {
         setMeasuredDimension(widthMeasureSpec, heightMeasureSpec)
     }
 
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        val size = width - margin * 2
+        cropRect.set(margin.toFloat(), ((height - size) / 2).toFloat(), (width - margin).toFloat(), ((height + size) / 2).toFloat())
+    }
+
     override fun onDraw(canvas: Canvas?) {
         canvas?.drawRect(0f, 0f, width.toFloat(), height.toFloat(), overlayPaint)
-        var size = width - margin * 2
-        cropRect.set(margin.toFloat(), ((height - size) / 2).toFloat(), (width - margin).toFloat(), ((height + size) / 2).toFloat())
         drawBorder(canvas)
     }
 
     fun drawBorder(canvas: Canvas?) {
-        var clearPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        val clearPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         clearPaint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-        var borderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+        val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         borderPaint.style = Paint.Style.STROKE
         borderPaint.strokeCap = Paint.Cap.SQUARE
         borderPaint.color = borderColor
