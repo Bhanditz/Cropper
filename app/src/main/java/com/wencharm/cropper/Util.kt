@@ -3,6 +3,12 @@ package com.wencharm.cropper
 import android.content.Context
 import android.graphics.Matrix
 import android.graphics.RectF
+import android.net.Uri
+import android.os.Environment
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 /**
  * Created by Wencharm on 14/07/2017.
@@ -61,4 +67,15 @@ fun translateToMatrix(initBounds: RectF, transformer: Matrix, dx: Float = 0f, dy
     transformer.postTranslate(dx, dy)
     out.set(initBounds)
     transformer.mapRect(out)
+}
+
+fun tempPath(context: Context, extension: String): Uri {
+    for (old in context.cacheDir.listFiles()) {
+        old.delete()
+    }
+    val date = Date()
+    val dateFormat = SimpleDateFormat("yyyyMMdd", Locale.US)
+    val fn = dateFormat.format(date) + "." + extension
+    return Uri.fromFile(File(context.cacheDir, fn))
+
 }

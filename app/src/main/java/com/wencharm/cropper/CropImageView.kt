@@ -15,7 +15,7 @@ import android.widget.ImageView
 class CropImageView(ctx: Context, attrs: AttributeSet?) : ImageView(ctx) {
 
     var allowedBounds = RectF()
-    private var imageBounds = RectF()
+    var imageBounds = RectF()
     private var realImageBounds = RectF()
     private var iMatrix = Matrix()
     var gestureProcessor = GestureProcessor()

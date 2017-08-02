@@ -2,11 +2,14 @@ package com.wencharm.cropper
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +29,19 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(Intent.createChooser(galleryIntent, "chooser"), SELECT_IMAGE)
         }
         cropView = findViewById(R.id.image)
+        cropView.setCropListener(object : BitmapLoadListener {
+            override fun onStart() {
+            }
+
+            override fun onError(e: Throwable) {
+                Toast.makeText(cropView.context, "error when cropping", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onComplete(uri: Uri, bitmap: Bitmap?) {
+                cropView.setImageUri(uri)
+            }
+
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -39,8 +55,10 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+            R.id.action_settings -> {
+                if (cropView.uri != null) cropView.crop()
+                return true
+            } else -> super.onOptionsItemSelected(item)
         }
     }
 

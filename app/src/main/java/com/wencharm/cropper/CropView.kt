@@ -21,6 +21,7 @@ class CropView @JvmOverloads constructor(
     var uri: Uri? = null
 
     private var loadListener: BitmapLoadListener? = null
+    private lateinit var cropListener: BitmapLoadListener
 
     init {
         imageView.setBackgroundColor(Color.BLACK)
@@ -89,8 +90,15 @@ class CropView @JvmOverloads constructor(
         loadListener = listener
     }
 
+    fun setCropListener(listener: BitmapLoadListener) {
+        cropListener = listener
+    }
+
     fun crop() {
         if (!imageView.isTransforming()) {
+            imageView.updateBounds()
+            var cropArea = CropArea(imageView.allowedBounds, imageView.imageBounds)
+            BitmapManager.crop(context, uri!!, 1080, 1080, cropArea, cropListener)
         }
     }
 
